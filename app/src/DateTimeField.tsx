@@ -2,18 +2,20 @@ import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/d
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from './theme';
 
-type Props = { value: Date; onChange: (d: Date) => void };
+type Props = { value: Date; onChange: (d: Date) => void; showTime: boolean };
 
 // iOS shows the native compact pickers inline. Android has no inline picker,
 // so we show tappable chips that open the system date/time dialogs.
-export function DateTimeField({ value, onChange }: Props) {
+export function DateTimeField({ value, onChange, showTime }: Props) {
   if (Platform.OS === 'ios') {
     return (
       <View style={styles.row}>
         <DateTimePicker mode="date" display="compact" value={value}
           onValueChange={(_, d) => onChange(d)} />
-        <DateTimePicker mode="time" display="compact" value={value}
-          onValueChange={(_, d) => onChange(d)} />
+        {showTime && (
+          <DateTimePicker mode="time" display="compact" value={value}
+            onValueChange={(_, d) => onChange(d)} />
+        )}
       </View>
     );
   }
@@ -23,10 +25,16 @@ export function DateTimeField({ value, onChange }: Props) {
 
   return (
     <View style={styles.row}>
-      <Chip label={value.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
-        onPress={() => open('date')} />
-      <Chip label={value.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}
-        onPress={() => open('time')} />
+      <Chip
+        label={value.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+        onPress={() => open('date')}
+      />
+      {showTime && (
+        <Chip
+          label={value.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}
+          onPress={() => open('time')}
+        />
+      )}
     </View>
   );
 }
@@ -41,11 +49,6 @@ function Chip({ label, onPress }: { label: string; onPress: () => void }) {
 
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: 8, alignItems: 'center' },
-  chip: {
-    backgroundColor: colors.chip,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
+  chip: { backgroundColor: colors.chip, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 8 },
   chipText: { fontSize: 16, color: colors.text },
 });

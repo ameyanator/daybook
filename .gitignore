@@ -1,3 +1,4 @@
-server/daybook.db*
 server/daybook-server
 .DS_Store
+server/server
+server/*.db*
