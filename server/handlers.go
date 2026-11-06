@@ -31,6 +31,10 @@ func NewRouter(store *Store, cfg Config) http.Handler {
 	s := &server{store: store, cfg: cfg}
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) { w.Write([]byte("ok")) })
+	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.Write([]byte(homeHTML))
+	})
 
 	// Sign-in
 	mux.HandleFunc("GET /auth/providers", s.providers)
@@ -419,6 +423,14 @@ text-decoration:none;font-weight:600;margin-top:1rem}p{color:#5c554e}</style></h
 <a class="btn" href="daybook://invite/{{.}}">Open in Daybook</a>
 </body></html>`))
 )
+
+const homeHTML = `<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Daybook</title>
+<style>body{font-family:-apple-system,system-ui,sans-serif;background:#FAF8F5;color:#1F1B16;
+max-width:28rem;margin:4rem auto;padding:0 1rem;text-align:center}p{color:#5c554e}</style></head>
+<body><h1>Daybook</h1><p>Your day, one line at a time.</p>
+<p>This is the Daybook server. Get the app on your phone to use it.</p></body></html>`
 
 // invitePage is what an invite link opens in a browser: a button that hands
 // the token to the app. (Later: universal/app links can open the app directly.)

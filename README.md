@@ -54,7 +54,7 @@ EXPO_PUBLIC_API_URL=http://$(ipconfig getifaddr en0):8080 npx expo start
    - Connect the GitHub repo `ameyanator/daybook`, with runtime **Docker** (it uses the root `Dockerfile`), the **Free** plan, and health check path `/healthz`.
    - Environment: `DATABASE_URL` = the Neon string, and `PUBLIC_URL` = the service's `https://….onrender.com` address. Add `GOOGLE_CLIENT_IDS` and `APPLE_BUNDLE_IDS` once you have them. Don't set `DEV_LOGIN`.
    - It auto-deploys on every push to `main`. Tables are created on first start.
-3. Point the app at it: `EXPO_PUBLIC_API_URL=https://….onrender.com`.
+3. Point the app at it: EAS builds already use the live server (`https://daybook-45ps.onrender.com`, set in `app/eas.json`).
 
 Free-plan caveat: Render puts the server to sleep after 15 minutes idle, and the first request after that takes about a minute while it wakes. Neon also sleeps after 5 minutes but wakes in under a second.
 

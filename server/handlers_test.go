@@ -372,3 +372,13 @@ func TestDefaultPublicURL(t *testing.T) {
 		}
 	}
 }
+
+func TestHomePage(t *testing.T) {
+	e := newEnv(t)
+	if status, b := e.do("GET", "/", "", ""); status != 200 || !strings.Contains(string(b), "Daybook") {
+		t.Errorf("home: %d %s", status, b)
+	}
+	if status, _ := e.do("GET", "/nope", "", ""); status != 404 {
+		t.Errorf("unknown path: %d, want 404", status)
+	}
+}
