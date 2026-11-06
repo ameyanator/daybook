@@ -378,6 +378,11 @@ func TestHomePage(t *testing.T) {
 	if status, b := e.do("GET", "/", "", ""); status != 200 || !strings.Contains(string(b), "Daybook") {
 		t.Errorf("home: %d %s", status, b)
 	}
+	for _, path := range []string{"/privacy", "/delete-account"} {
+		if status, b := e.do("GET", path, "", ""); status != 200 || !strings.Contains(string(b), "ameya.business26@gmail.com") {
+			t.Errorf("%s: %d", path, status)
+		}
+	}
 	if status, _ := e.do("GET", "/nope", "", ""); status != 404 {
 		t.Errorf("unknown path: %d, want 404", status)
 	}
