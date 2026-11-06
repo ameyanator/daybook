@@ -7,16 +7,33 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "env": { "EXPO_PUBLIC_API_URL": "https://daybook-45ps.onrender.com" }
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://daybook-45ps.onrender.com",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "593510141294-2av5ehide6lf5j9jbnk27jkt209o3n28.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "593510141294-eq00tqg1pjr0cigda3tafmu7nsncdegj.apps.googleusercontent.com",
+        "GOOGLE_IOS_URL_SCHEME": "com.googleusercontent.apps.593510141294-eq00tqg1pjr0cigda3tafmu7nsncdegj"
+      }
     },
     "preview": {
       "distribution": "internal",
-      "android": { "buildType": "apk" },
-      "env": { "EXPO_PUBLIC_API_URL": "https://daybook-45ps.onrender.com" }
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://daybook-45ps.onrender.com",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "593510141294-2av5ehide6lf5j9jbnk27jkt209o3n28.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "593510141294-eq00tqg1pjr0cigda3tafmu7nsncdegj.apps.googleusercontent.com",
+        "GOOGLE_IOS_URL_SCHEME": "com.googleusercontent.apps.593510141294-eq00tqg1pjr0cigda3tafmu7nsncdegj"
+      }
     },
     "production": {
       "autoIncrement": true,
-      "env": { "EXPO_PUBLIC_API_URL": "https://daybook-45ps.onrender.com" }
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://daybook-45ps.onrender.com",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "593510141294-2av5ehide6lf5j9jbnk27jkt209o3n28.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "593510141294-eq00tqg1pjr0cigda3tafmu7nsncdegj.apps.googleusercontent.com",
+        "GOOGLE_IOS_URL_SCHEME": "com.googleusercontent.apps.593510141294-eq00tqg1pjr0cigda3tafmu7nsncdegj"
+      }
     }
   },
   "submit": {

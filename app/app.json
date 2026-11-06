@@ -29,6 +29,12 @@
       "expo-secure-store",
       "expo-apple-authentication"
     ],
-    "scheme": "daybook"
+    "scheme": "daybook",
+    "extra": {
+      "eas": {
+        "projectId": "f5ed38f4-d033-408d-b18f-74e8892a3ae4"
+      }
+    },
+    "owner": "ameya.sinha"
   }
 }
