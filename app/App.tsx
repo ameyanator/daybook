@@ -21,7 +21,7 @@ import * as api from './src/api';
 import type { DaybookEvent, User } from './src/api';
 import { AuthProvider, useAuth } from './src/auth';
 import { DateTimeField } from './src/DateTimeField';
-import { groupByDay, isPast, nextHour, toDateString } from './src/schedule';
+import { fromDateString, groupByDay, isPast, nextHour, toDateString } from './src/schedule';
 import { displayName, ShareScreen } from './src/ShareScreen';
 import { SignInScreen } from './src/SignInScreen';
 import { colors } from './src/theme';
@@ -163,7 +163,15 @@ function Calendar({ owner }: { owner: User | null }) {
     load().finally(() => setLoading(false));
   }, [load]);
 
-  const sections = useMemo(() => groupByDay(events), [events]);
+  // Past items collapse into one slim row at the top so upcoming ones get the space.
+  const [showPast, setShowPast] = useState(false);
+  const { past, sections } = useMemo(() => {
+    const now = new Date();
+    const past = groupByDay(events.filter((e) => isPast(e, now))).flatMap((s) => s.data);
+    const upcoming = groupByDay(events.filter((e) => !isPast(e, now)), now);
+    const pastSection = { key: 'past', title: '', data: showPast ? past : [] };
+    return { past, sections: past.length ? [pastSection, ...upcoming] : upcoming };
+  }, [events, showPast]);
 
   function confirmDelete(e: DaybookEvent) {
     Alert.alert('Delete this?', e.title, [
@@ -184,8 +192,6 @@ function Calendar({ owner }: { owner: User | null }) {
       },
     ]);
   }
-
-  const now = new Date();
 
   return (
     <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -221,24 +227,39 @@ function Calendar({ owner }: { owner: User | null }) {
               setRefreshing(false);
             }} />
           }
-          renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
-          renderItem={({ item }) => (
-            <Pressable
-              onLongPress={readOnly ? undefined : () => confirmDelete(item)}
-              style={[styles.item, isPast(item, now) && styles.itemPast]}
-            >
-              {item.kind === 'allDay' ? (
-                <Text style={[styles.itemTime, styles.allDay]}>All day</Text>
-              ) : (
-                <Text style={styles.itemTime}>
-                  {item.startsAt.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}
+          renderSectionHeader={({ section }) =>
+            section.key === 'past' ? (
+              <Pressable onPress={() => setShowPast((v) => !v)} style={styles.pastToggle} hitSlop={6}
+                accessibilityRole="button">
+                <Text style={styles.pastToggleText}>
+                  {showPast ? '▾' : '▸'} {past.length} past {past.length === 1 ? 'item' : 'items'}
                 </Text>
-              )}
-              <Text style={styles.itemTitle}>{item.title}</Text>
-            </Pressable>
-          )}
+              </Pressable>
+            ) : (
+              <Text style={styles.sectionHeader}>{section.title}</Text>
+            )
+          }
+          renderItem={({ item, section }) =>
+            section.key === 'past' ? (
+              <Pressable onLongPress={readOnly ? undefined : () => confirmDelete(item)} style={styles.pastItem}>
+                <Text style={styles.pastWhen} numberOfLines={1}>{pastLabel(item)}</Text>
+                <Text style={styles.pastTitle} numberOfLines={1}>{item.title}</Text>
+              </Pressable>
+            ) : (
+              <Pressable onLongPress={readOnly ? undefined : () => confirmDelete(item)} style={styles.item}>
+                {item.kind === 'allDay' ? (
+                  <Text style={[styles.itemTime, styles.allDay]}>All day</Text>
+                ) : (
+                  <Text style={styles.itemTime}>
+                    {item.startsAt.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}
+                  </Text>
+                )}
+                <Text style={styles.itemTitle}>{item.title}</Text>
+              </Pressable>
+            )
+          }
           ListEmptyComponent={
-            <Text style={styles.empty}>
+            past.length ? undefined : <Text style={styles.empty}>
               {readOnly ? 'Nothing on this calendar yet.' : 'Nothing scheduled yet. Add your first thing above.'}
             </Text>
           }
@@ -251,6 +272,15 @@ function Calendar({ owner }: { owner: User | null }) {
       )}
     </KeyboardAvoidingView>
   );
+}
+
+/** Short date (and time) for a compact past row, e.g. "30 Oct · 3:30 pm". */
+function pastLabel(e: DaybookEvent): string {
+  const d = e.kind === 'allDay' ? fromDateString(e.date) : e.startsAt;
+  const date = d.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
+  return e.kind === 'allDay'
+    ? date
+    : `${date} · ${d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}`;
 }
 
 function Composer({ onAdd, onError }: {
@@ -383,7 +413,11 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.border,
   },
-  itemPast: { opacity: 0.45 },
+  pastToggle: { alignSelf: 'flex-start', marginTop: 16, paddingVertical: 4, paddingHorizontal: 4 },
+  pastToggleText: { fontSize: 14, fontWeight: '600', color: colors.muted },
+  pastItem: { flexDirection: 'row', gap: 12, paddingVertical: 5, paddingHorizontal: 4, opacity: 0.6 },
+  pastWhen: { width: 120, fontSize: 13, color: colors.muted, fontVariant: ['tabular-nums'] },
+  pastTitle: { flex: 1, fontSize: 13, color: colors.muted, textDecorationLine: 'line-through' },
   itemTime: {
     width: 76,
     fontSize: 15,

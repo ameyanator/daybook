@@ -35,6 +35,12 @@
         "projectId": "f5ed38f4-d033-408d-b18f-74e8892a3ae4"
       }
     },
-    "owner": "ameya.sinha"
+    "owner": "ameya.sinha",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/f5ed38f4-d033-408d-b18f-74e8892a3ae4"
+    }
   }
 }

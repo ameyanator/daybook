@@ -58,6 +58,15 @@ EXPO_PUBLIC_API_URL=http://$(ipconfig getifaddr en0):8080 npx expo start
 
 Free-plan caveat: Render puts the server to sleep after 15 minutes idle, and the first request after that takes about a minute while it wakes. Neon also sleeps after 5 minutes but wakes in under a second.
 
+## Shipping app changes
+
+- **JavaScript/UI-only changes** go out over the air, and installed apps pick them up the next time they're opened:
+  ```sh
+  cd app && npx eas-cli@latest update --channel preview --message "what changed"
+  ```
+  The bundle reads public config from `app/.env.production`. Keep that file in sync with the `env` blocks in `eas.json`.
+- **Native changes** (a new library with native code, app.json plugins or permissions, or an `expo` SDK upgrade) need a new build: `npx eas-cli@latest build -p android --profile preview`. Bump `version` in app.json at the same time, because updates only reach builds with the same `runtimeVersion` (which follows the app version).
+
 ## Setting up Google and Apple sign-in
 
 1. **Google Cloud Console → APIs & Services → Credentials.** Create three OAuth client IDs:
